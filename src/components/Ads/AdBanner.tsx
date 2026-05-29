@@ -1,27 +1,51 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface AdBannerProps {
-  size?: 'leaderboard' | 'rectangle' | 'responsive';
   className?: string;
 }
 
-const AdBanner: React.FC<AdBannerProps> = ({ size = 'responsive', className = '' }) => {
-  const dimensions = {
-    leaderboard: 'h-[90px] max-w-[728px]',
-    rectangle: 'h-[250px] max-w-[300px]',
-    responsive: 'h-[90px]',
-  };
+const AdBanner: React.FC<AdBannerProps> = ({ className = '' }) => {
+  const adRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (adRef.current) {
+      const script1 = document.createElement('script');
+      script1.type = 'text/javascript';
+      script1.innerHTML = `
+        atOptions = {
+          'key' : '795271412decdf657de674f570ac8719',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      `;
+
+      const script2 = document.createElement('script');
+      script2.type = 'text/javascript';
+      script2.src =
+        'https://www.highperformanceformat.com/795271412decdf657de674f570ac8719/invoke.js';
+      script2.async = true;
+
+      adRef.current.appendChild(script1);
+      adRef.current.appendChild(script2);
+    }
+  }, []);
 
   return (
     <div
-      className={`${dimensions[size]} w-full mx-auto bg-[#F9F9F9] border border-dashed border-[#DDD] rounded-lg flex items-center justify-center ${className}`}
+      className={`
+        w-full
+        max-w-[728px]
+        h-[90px]
+        mx-auto
+        overflow-hidden
+        rounded-lg
+        ${className}
+      `}
       aria-label="Advertisement"
     >
-      <div className="text-center">
-        <div className="text-[10px] uppercase tracking-widest text-[#CCC] font-medium">Advertisement</div>
-        {/* Google AdSense code would go here */}
-        {/* <ins className="adsbygoogle" ... /> */}
-      </div>
+      <div ref={adRef} />
     </div>
   );
 };
